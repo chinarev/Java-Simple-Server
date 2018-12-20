@@ -1,5 +1,8 @@
 package servlets;
 
+import main.Connector;
+import main.Shop;
+import main.Tool;
 import templater.PageGenerator;
 
 import javax.servlet.ServletException;
@@ -18,37 +21,25 @@ import java.util.Map;
  *         Описание курса и лицензия: https://github.com/vitaly-chibrikov/stepic_java_webserver
  */
 public class AllRequestsServlet extends HttpServlet {
+    Connector connector;
 
+    public AllRequestsServlet(Connector connector) {
+        this.connector = connector;
+    }
     public void doGet(HttpServletRequest request,
                       HttpServletResponse response) throws ServletException, IOException {
 
-        Map<String, Object> pageVariables = createPageVariablesMap(request);
-        pageVariables.put("message", "");
+       Shop shop = new Shop(3, "Mobile", "Nevsiy");
+       connector.createShop(shop);
+      // Tool tool = new Tool("Iphone 7", 10000, "reStore");
+      // connector.createTool(tool);
 
-        response.getWriter().println(PageGenerator.instance().getPage("page.html", pageVariables));
+       response.setStatus(HttpServletResponse.SC_OK);
 
-        response.setContentType("text/html;charset=utf-8");
-        response.setStatus(HttpServletResponse.SC_OK);
 
     }
 
-    public void doPost(HttpServletRequest request,
-                       HttpServletResponse response) throws ServletException, IOException {
-        Map<String, Object> pageVariables = createPageVariablesMap(request);
 
-        String message = request.getParameter("message");
-
-        response.setContentType("text/html;charset=utf-8");
-
-        if (message == null || message.isEmpty()) {
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-        } else {
-            response.setStatus(HttpServletResponse.SC_OK);
-        }
-        pageVariables.put("message", message == null ? "" : message);
-
-        response.getWriter().println(PageGenerator.instance().getPage("page.html", pageVariables));
-    }
 
     private static Map<String, Object> createPageVariablesMap(HttpServletRequest request) {
         Map<String, Object> pageVariables = new HashMap<>();
